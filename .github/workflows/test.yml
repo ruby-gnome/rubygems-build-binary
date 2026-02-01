@@ -1,0 +1,29 @@
+name: Test
+on:
+  push:
+    branches:
+      - '**'
+      - '!dependabot/**'
+  pull_request:
+jobs:
+  docker:
+    name: ${{ matrix.distribution }}
+    strategy:
+      fail-fast: false
+      matrix:
+        distribution:
+          - ubuntu-24.04
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build Docker images
+        run: |
+          docker compose build ${{ matrix.distribution }}-build
+          docker compose build ${{ matrix.distribution }}-use
+      - name: Build
+        run: |
+          docker compose run --rm ${{ matrix.distribution }}-build
+      - name: Use
+        run: |
+          docker compose run --rm ${{ matrix.distribution }}-use

@@ -1,0 +1,22 @@
+services:
+  ubuntu-24.04-build:
+    build:
+      context: .
+      dockerfile: dockerfiles/ubuntu-build.dockerfile
+      args:
+        VERSION: "24.04"
+    volumes:
+      - .:/host:delegated
+    command:
+      - /host/dockerfiles/build.sh
+
+  ubuntu-24.04-use:
+    build:
+      context: .
+      dockerfile: dockerfiles/ubuntu-use.dockerfile
+      args:
+        VERSION: "24.04"
+    volumes:
+      - .:/host:delegated
+    command:
+      - /host/dockerfiles/use.sh
