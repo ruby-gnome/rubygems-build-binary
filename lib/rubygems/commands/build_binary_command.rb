@@ -5,7 +5,16 @@ require "rubygems/dependency_installer"
 
 class Gem::Commands::BuildBinaryCommand < Gem::Command
   def initialize
-    super("build_binary", "Build a binary gem for the current platform")
+    super("build_binary",
+          "Build a binary gem for the current platform",
+          requirements: [])
+
+    add_option("--add-requirement=REQUIREMENT",
+               "Add REQUIREMENT to spec.requirements",
+               "You can specify this option multiple times",
+               "to add multiples requirements") do |value, options|
+      options[:requirements] << value
+    end
   end
 
   def arguments
@@ -81,6 +90,11 @@ class Gem::Commands::BuildBinaryCommand < Gem::Command
     spec.platform = Gem::Platform.local
     # Available only for the current Ruby.
     spec.required_ruby_version = required_ruby_version
+
+    pp @options
+    @options[:requirements].each do |requirement|
+      spec.requirements << requirement
+    end
   end
 
   def required_ruby_version
